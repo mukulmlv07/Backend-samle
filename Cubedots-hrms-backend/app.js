@@ -1,12 +1,15 @@
 const express = require('express')
 const bodyParser = require('body-parser')
-// const routes = require('./src/routes')
+const routes = require('./src/routes')
+const morgan = require('morgan')
 const { SERVER_PORT, NODE_ENV, FE_URL } = require('./config/config')
 
 // Connect to mongodb
 require('./db')
 
 const app = express()
+app.use(morgan("dev"));
+
 const User = require('./db/models/users')
 const allowCrossDomain = function (req, res, next) {
     res.header('Access-Control-Allow-Origin', '*')
@@ -27,15 +30,15 @@ app.use('/ping',(req,res)=>{
     })
 })
 
-app.get('/', async (req, res) => {
-    const users = await User.find().select("email firstName lastName _id employeeId phone");
-    // res.status(200).json({
-    //   users: users
-    // })
-    res.send(users);
+// app.get('/', async (req, res) => {
+//     const users = await User.find().select("email firstName lastName _id employeeId phone");
+//     // res.status(200).json({
+//     //   users: users
+//     // })
+//     res.send(users);
     
-})
-// app.use('/api', routes)
+// })
+app.use('/api', routes)
 
 app.listen(SERVER_PORT, (err) => {
     if (err) {
